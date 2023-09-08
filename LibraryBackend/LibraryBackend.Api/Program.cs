@@ -1,25 +1,35 @@
+using LibraryBackend.Api.Extensions;
+using LibraryBackend.Application.Behaviours;
+using LibraryBackend.Infrastructure.Configurations;
+using LibraryBackend.Infrastructure.Context;
+using LibraryBackend.Infrastructure.Extensions;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// serilog configuration added
+builder.Host.UseSerilog(SeriLogger.Configure);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.WebHost.ConfigureKestrel(ck =>
+{
+    ck.ConfigureHttpsDefaults(httpDf =>
+    {
+        httpDf.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+    });
+});
+
+// Add services to the container.
+builder.Services.AddApiServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.ConfigureWebApplicationServices();
+
+app.MigrateDatabase<ApplicationDbContext>((context, services) =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+    var logger = services.GetService<ILogger<ApplicationDbContext>>();
+    LibraryAppContextSeeder
+        .SeedAsync(context, logger)
+        .Wait();
+}).Run();
