@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryBackend.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryBackend.Application", "LibraryBackend.Application\LibraryBackend.Application.csproj", "{BB3989EF-13EE-451D-8550-BADB03B167FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryBackend.Test", "LibraryBackend.Test\LibraryBackend.Test.csproj", "{FFE7859B-AB93-4929-8A04-F85FD453FD85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{BB3989EF-13EE-451D-8550-BADB03B167FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB3989EF-13EE-451D-8550-BADB03B167FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB3989EF-13EE-451D-8550-BADB03B167FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFE7859B-AB93-4929-8A04-F85FD453FD85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFE7859B-AB93-4929-8A04-F85FD453FD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFE7859B-AB93-4929-8A04-F85FD453FD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFE7859B-AB93-4929-8A04-F85FD453FD85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
