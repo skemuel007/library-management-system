@@ -30,9 +30,6 @@
 
 
 
-    <ItemGroup>
-      <Folder Include="EntityTypeConfigurations\" />
-    </ItemGroup>
 
 
 </Project>
