@@ -10,4 +10,7 @@ public class Book : AuditBaseEntity<Guid>
     public int PublishedYear { get; set;  }
     public string Genre { get; set; }
     public string ImageUrl { get; set; }
+
+    public Guid CategoryId { get; set; }
+    public Category Category { get; set; }
 }
