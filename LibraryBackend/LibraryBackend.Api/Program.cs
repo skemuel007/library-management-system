@@ -1,5 +1,6 @@
 using LibraryBackend.Api.Extensions;
 using LibraryBackend.Application.Behaviours;
+using LibraryBackend.Application.Extensions;
 using LibraryBackend.Infrastructure.Configurations;
 using LibraryBackend.Infrastructure.Context;
 using LibraryBackend.Infrastructure.Extensions;
@@ -20,6 +21,7 @@ builder.WebHost.ConfigureKestrel(ck =>
 
 // Add services to the container.
 builder.Services.AddApiServices(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();

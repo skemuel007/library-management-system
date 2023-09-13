@@ -2,9 +2,11 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using LibraryBackend.Api.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace LibraryBackend.Api.Extensions;
@@ -39,6 +41,30 @@ public static class ServiceCollectionExtensions
             });
 
             options.EnableAnnotations();
+            
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JSON Web Token Authorization header using the Bearer scheme. Authorization: Bearer {token}",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer"
+            });
+            
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                    },
+                    new List<string>()
+                }
+            });
 
             var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
@@ -63,8 +89,54 @@ public static class ServiceCollectionExtensions
         #endregion
         
         services.AddMemoryCache();
+        
+        #region -- Configure jwt bearer
+        // byte[] secretKey = Convert.FromBase64String(configuration["JwtSettings:SecurityKey"]);
+        services.AddAuthentication(opt =>
+        {
+            opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                RequireExpirationTime = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = configuration["JwtSettings:Issuer"],
+                ValidAudience = configuration["JwtSettings:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.
+                    GetBytes(configuration["JwtSettings:SecurityKey"]))
+            };
+            options.Events = new JwtBearerEvents()
+            {
+                // If the Token is expired the respond
+                OnAuthenticationFailed = context =>
+                {
+                    if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                    {
+                        context.Response.Headers.Add
+                            ("Authentication-Token-Expired", "true");
+                    }
+                    return Task.CompletedTask;
+                }
+            };
+        });
+        #endregion
 
-// configure rate limiting
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminPolicy", (policy) => { policy.RequireRole("Administrator"); });
+            
+            options.AddPolicy("UserPolicy",
+                (policy) => { policy.RequireRole("Administrator", "User"); });
+        });
+
+        // configure rate limiting
         var rateLimitRules = new List<RateLimitRule>
         {
             new RateLimitRule
@@ -118,6 +190,7 @@ public static class ServiceCollectionExtensions
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseCors(x => x

@@ -34,9 +34,18 @@ public static class InfrastructureServiceExtension
         services.AddHangfireServer();
         #endregion
 
-        services.AddIdentity<User, IdentityRole>()
+        services.AddIdentity<User, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                // options.Password.RequiredLength = 8;
+            })
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
+        services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 

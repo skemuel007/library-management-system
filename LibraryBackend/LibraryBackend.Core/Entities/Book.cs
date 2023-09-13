@@ -3,7 +3,7 @@ using LibraryBackend.Core.Common;
 
 namespace LibraryBackend.Core.Entities;
 
-public class Books : AuditBaseEntity<Guid>
+public class Book : AuditBaseEntity<Guid>
 {
     public string Title { get; set; }
     public string ISBN { get; set; }
