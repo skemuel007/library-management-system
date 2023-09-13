@@ -16,9 +16,8 @@
 
 
     <ItemGroup>
-      <Folder Include="Dtos\Common\" />
-      <Folder Include="Dtos\Request\" />
       <Folder Include="Exceptions\" />
+      <Folder Include="Features\Queries\" />
     </ItemGroup>
 
 
@@ -30,6 +29,7 @@
       <PackageReference Include="FluentValidation" Version="11.7.1" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
       <PackageReference Include="MediatR" Version="12.1.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.22" />
       <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
