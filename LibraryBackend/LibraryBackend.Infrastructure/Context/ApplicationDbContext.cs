@@ -8,6 +8,8 @@ namespace LibraryBackend.Infrastructure.Context;
 
 public class ApplicationDbContext : IdentityDbContext<User>
 {
+    public virtual DbSet<Category> Categories { get; set; }
+    public virtual DbSet<Book> Books { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }

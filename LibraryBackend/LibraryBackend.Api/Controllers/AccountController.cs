@@ -5,15 +5,9 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryBackend.Api.Controllers;
+
 public class AccountController : BaseController<AccountController>
 {
-    /*private readonly IMediator _mediator;
-    
-    public AccountController(IMediator mediator)
-    {
-        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-    }*/
-    
     [Route("login", Name = "Login")]
     [HttpPost]
     public async Task<IActionResult> LoginUserAsync(LoginRequest loginRequest)

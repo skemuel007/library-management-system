@@ -133,7 +133,7 @@ public static class ServiceCollectionExtensions
             options.AddPolicy("AdminPolicy", (policy) => { policy.RequireRole("Administrator"); });
             
             options.AddPolicy("UserPolicy",
-                (policy) => { policy.RequireRole("Administrator", "User"); });
+                (policy) => { policy.RequireRole("Administrator", "Customer"); });
         });
 
         // configure rate limiting

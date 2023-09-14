@@ -1,9 +1,6 @@
-using System.Reflection.Metadata.Ecma335;
-using LibraryBackend.Core.Common;
+namespace LibraryBackend.Application.Dtos.Request;
 
-namespace LibraryBackend.Core.Entities;
-
-public class Book : AuditBaseEntity<Guid>
+public record CreateBookDto
 {
     public string Title { get; set; }
     public string ISBN { get; set; }
@@ -12,5 +9,4 @@ public class Book : AuditBaseEntity<Guid>
     public string ImageUrl { get; set; }
 
     public Guid CategoryId { get; set; }
-    public Category Category { get; set; }
 }

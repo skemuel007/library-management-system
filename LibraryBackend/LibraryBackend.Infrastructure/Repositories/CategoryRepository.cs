@@ -4,9 +4,9 @@ using LibraryBackend.Infrastructure.Context;
 
 namespace LibraryBackend.Infrastructure.Repositories;
 
-public class BookRepository : GenericRepository<Book, Guid>, IBookRepository
+public class CategoryRepository : GenericRepository<Category, Guid>, ICategoryRepository
 {
-    public BookRepository(ApplicationDbContext dbContext) : base(dbContext)
+    public CategoryRepository(ApplicationDbContext dbContext) : base(dbContext)
     {
     }
 }

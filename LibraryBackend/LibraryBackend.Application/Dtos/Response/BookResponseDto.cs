@@ -1,9 +1,8 @@
-using System.Reflection.Metadata.Ecma335;
-using LibraryBackend.Core.Common;
+using LibraryBackend.Application.Dtos.Common;
 
-namespace LibraryBackend.Core.Entities;
+namespace LibraryBackend.Application.Dtos.Response;
 
-public class Book : AuditBaseEntity<Guid>
+public class BookResponseDto : AuditBaseDto
 {
     public string Title { get; set; }
     public string ISBN { get; set; }
@@ -12,5 +11,6 @@ public class Book : AuditBaseEntity<Guid>
     public string ImageUrl { get; set; }
 
     public Guid CategoryId { get; set; }
-    public Category Category { get; set; }
+    
+    public CategoryResponseDto Category { get; set; }
 }
