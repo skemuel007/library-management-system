@@ -2,15 +2,8 @@ using System.Linq.Expressions;
 using LibraryBackend.Application.Dtos.Response;
 using LibraryBackend.Application.Specifications;
 using LibraryBackend.Core.Common;
-using LibraryBackend.Core.Entities;
 
 namespace LibraryBackend.Application.Interfaces.Persistence;
-
-public interface IBookRepository : IGenericRepository<Book, Guid>
-{
-    
-}
-
 public interface IGenericRepository<T, IdType> where T : BaseEntity<IdType>
 {
     Task<IReadOnlyList<T>> GetAllAsync();
