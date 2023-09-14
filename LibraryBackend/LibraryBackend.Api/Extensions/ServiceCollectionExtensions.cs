@@ -1,7 +1,11 @@
+using System.Net;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using AspNetCoreRateLimit;
 using LibraryBackend.Api.Middlewares;
+using LibraryBackend.Application.Dtos.Common;
+using LibraryBackend.Application.Dtos.Response;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +22,32 @@ public static class ServiceCollectionExtensions
 
         services.AddCors();
         
+        services.AddMemoryCache();
+        
         #region -- Add Controllers
         services.AddControllers()
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.WriteIndented = true;
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+            }).ConfigureApiBehaviorOptions(options =>
+            {
+                options.InvalidModelStateResponseFactory = c =>
+                {
+                    var errors = string.Join('\n', c.ModelState.Values.Where(v => v.Errors.Count > 0)
+                        .SelectMany(v => v.Errors)
+                        .Select(v => v.ErrorMessage));
+
+                    return new BadRequestObjectResult(new BaseCommandResponse<string[]>
+                    {
+                        Message = $"",
+                        StatusCode = HttpStatusCode.BadRequest,
+                        Data = errors.Split('\n').ToArray()
+                    });
+                };
             });
         #endregion
         
@@ -88,8 +112,6 @@ public static class ServiceCollectionExtensions
         });
         #endregion
         
-        services.AddMemoryCache();
-        
         #region -- Configure jwt bearer
         // byte[] secretKey = Convert.FromBase64String(configuration["JwtSettings:SecurityKey"]);
         services.AddAuthentication(opt =>
@@ -128,6 +150,7 @@ public static class ServiceCollectionExtensions
         });
         #endregion
 
+        #region -- Configure Authorization Policy
         services.AddAuthorization(options =>
         {
             options.AddPolicy("AdminPolicy", (policy) => { policy.RequireRole("Administrator"); });
@@ -135,8 +158,10 @@ public static class ServiceCollectionExtensions
             options.AddPolicy("UserPolicy",
                 (policy) => { policy.RequireRole("Administrator", "Customer"); });
         });
+        #endregion
 
-        // configure rate limiting
+        #region -- Configure rate limiting
+        
         var rateLimitRules = new List<RateLimitRule>
         {
             new RateLimitRule
@@ -146,8 +171,7 @@ public static class ServiceCollectionExtensions
                 Period = configuration.GetValue<string>("RateLimiting:Period")
             }
         };
-
-        #region -- Rate limiting configuration
+        
         services.Configure<IpRateLimitOptions>(opt =>
         {
             opt.GeneralRules = rateLimitRules;
