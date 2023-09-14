@@ -1,4 +1,5 @@
 using Hangfire;
+using LibraryBackend.Application.Dtos.Response;
 using LibraryBackend.Application.Interfaces.Persistence;
 using LibraryBackend.Core.Entities;
 using LibraryBackend.Infrastructure.Context;
@@ -22,6 +23,17 @@ public static class InfrastructureServiceExtension
         #region -- Database connection configuration
         var connectionString = configuration.GetConnectionString("LibraryAppConnectionString");
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+        
+        services.AddIdentity<User, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                // options.Password.RequiredLength = 8;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>();
         #endregion
         
         #region-- Hangfire Setup
@@ -34,19 +46,12 @@ public static class InfrastructureServiceExtension
         services.AddHangfireServer();
         #endregion
 
-        services.AddIdentity<User, IdentityRole>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                // options.Password.RequiredLength = 8;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>();
-
+        #region -- Add Repository to service collection
         services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IBookRepository, BookRepository>();
+        #endregion
     }
 
     public static IHost MigrateDatabase<TContext>(this IHost host, Action<TContext, IServiceProvider> seeder)

@@ -12,10 +12,10 @@ namespace LibraryBackend.Application.Features.Handlers;
 public class RegistrationCommandHandler : IRequestHandler<RegistrationCommand, BaseCommandResponse>
 {
     private readonly UserManager<User> _userManager;
-    private ILogger<LoginCommandHandler> _logger;
+    private ILogger<RegistrationCommandHandler> _logger;
 
     public RegistrationCommandHandler(UserManager<User> userManager,
-        ILogger<LoginCommandHandler> logger)
+        ILogger<RegistrationCommandHandler> logger)
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));

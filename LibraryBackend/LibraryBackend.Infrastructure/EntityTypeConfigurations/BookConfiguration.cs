@@ -13,5 +13,8 @@ public class BookConfiguration : BaseEntityTypeConfiguration<Book, Guid>
             .WithMany(c => c.Books)
             .HasForeignKey(b => b.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(b => b.ISBN).IsUnique();
+        builder.HasIndex(b => b.Title);
     }
 }
