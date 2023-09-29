@@ -12,9 +12,9 @@ namespace LibraryBackend.Application.Features.Handlers;
 
 public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, BaseCommandResponse<BookResponseDto>>
 {
-    private ILogger<CreateCategoryCommandHandler> _logger;
-    private ICategoryRepository _categoryRepository;
-    private IBookRepository _bookRepository;
+    private readonly ILogger<CreateCategoryCommandHandler> _logger;
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IBookRepository _bookRepository;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     
